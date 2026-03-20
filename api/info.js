@@ -5,18 +5,17 @@ export default async function handler(req, res) {
   const id = req.query.id || req.query.slug;
   if (!id) return res.status(400).json({ error: "id required" });
   try {
-    const r = await fetch(EPORNER + "/video/" + id + "/?format=json&thumbsize=big&gay=1");
-    const text = await r.text();
-    let v;
-    try { v = JSON.parse(text); } catch(e) { return res.status(500).json({ error: "Invalid JSON from upstream", raw: text.slice(0,200) }); }
-    if (!v || !v.id) return res.status(404).json({ error: "Not found", id });
+    const r = await fetch(EPORNER + "/video/search/?query=" + id + "&per_page=1&format=json&thumbsize=big");
+    const data = await r.json();
+    const v = data.videos?.[0];
+    if (!v) return res.status(404).json({ error: "Not found" });
     res.json({
       id: v.id, slug: v.id,
       title: v.title || "",
       name: v.title || "",
-      cover_url: v.default_thumb?.src || "",
+      cover_url: v.default_thumb?.src || v.thumbs?.[4]?.src || "",
       poster: v.default_thumb?.src || "",
-      description: v.description || "",
+      description: "",
       tags: (v.keywords || "").split(",").map(t => t.trim()).filter(Boolean),
       views: parseInt(v.views) || 0,
       rate: v.rate || "0",
