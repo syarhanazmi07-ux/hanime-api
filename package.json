@@ -1,0 +1,11 @@
+{
+  "name": "hanime-api-vercel",
+  "version": "1.0.0",
+  "description": "Hentai API for Vercel serverless",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
